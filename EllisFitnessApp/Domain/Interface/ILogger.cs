@@ -1,3 +1,5 @@
+using Domain.Models.Logger;
+
 namespace Domain.Logger.Interface;
 
 public interface ILogger
