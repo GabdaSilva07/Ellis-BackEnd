@@ -7,5 +7,8 @@ public class LogMessage
   public LogLevel LogLevel { get; set; }
   public LogSource LogSource { get; set; }
   public DateTime TimeStamp { get; set; }
+  public string? ErrorMessage { get; set; }
+  public int? UserId { get; set; }
+  public Dictionary<string, object>? AdditionalData { get; set; }
   
 }
