@@ -1,6 +1,11 @@
 namespace Domain.Logger.Interface.CQRS;
 
-public class ICommandFactory
+public interface ICommandFactory<T, K>
 {
+    ICommand<T, K> CreateInsertCommand();
+
+    ICommand<T, K> CreateUpdateCommand();
+
+    ICommand<T, K> CreateDeleteCommand();
     
 }
