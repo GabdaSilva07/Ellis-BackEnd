@@ -6,4 +6,6 @@ public class LogMessage
   public string Message { get; set; }
   public LogLevel LogLevel { get; set; }
   public LogSource LogSource { get; set; }
+  public DateTime TimeStamp { get; set; }
+  
 }
