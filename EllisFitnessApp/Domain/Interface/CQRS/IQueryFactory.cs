@@ -1,6 +1,6 @@
 namespace Domain.Logger.Interface.CQRS;
 
-public interface IQueryFactory : IQuery
+public interface IQueryFactory<T>
 {
-    
+    Task<T> CreateQuery();
 }
