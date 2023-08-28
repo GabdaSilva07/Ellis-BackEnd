@@ -57,7 +57,13 @@ public class Logger : ILogger
 
     public async Task LogAsync(LogMessage message, bool logToDatabase)
     {
-        
+        message.TimeStamp = DateTime.Now;
+        message.LogSource = _LogSource;
+        var prefix = !string.IsNullOrEmpty(message.Subject) ? $"{message.Subject} - " : "";
+
+        switch (message.LogLevel)
+        {
+        }
     }
 
     public Task LogAsync(string message, LogLevel logLevel, bool logToDatabase)
@@ -73,5 +79,27 @@ public class Logger : ILogger
     public void Log(string message, LogLevel logLevel, bool logToDatabase)
     {
         throw new NotImplementedException();
+    }
+
+    private async Task LogError()
+    {
+        var logMessage = new LogMessage
+        {
+            Subject = "Error",
+            Message = "Error",
+            LogLevel = LogLevel.Error,
+            LogSource = _LogSource,
+            TimeStamp = DateTime.Now
+        };
+
+        await _LogMessageCommandFactory.ExecuteAsync(logMessage);
+    }
+
+    private void LogToDatabase(LogMessage logMessage)
+    {
+        ThreadPool.QueueUserWorkItem(async state =>
+        {
+            await _LogMessageCommandFactory.CreateInsertCommand();
+        });
     }
 }

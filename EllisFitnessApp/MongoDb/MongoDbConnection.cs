@@ -1,15 +1,21 @@
-﻿namespace MongoDb;
+﻿using MongoDB.Driver;
+
+namespace MongoDb;
 
 public class MongoDbConnection
 {
     private readonly string _connectionString;
+    protected readonly MongoClient _mongoClient;
+    protected readonly IMongoDatabase _database;
 
     public MongoDbConnection()
     {
     }
 
-    public MongoDbConnection(string connectionString)
+    public MongoDbConnection(string connectionString, string databaseName)
     {
-        _connectionString = connectionString;
+        _mongoClient = new MongoClient(connectionString);
+        _database = _mongoClient.GetDatabase(databaseName);
+
     }
 }
