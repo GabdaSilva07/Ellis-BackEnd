@@ -1,8 +1,11 @@
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace Domain.Models.Logger;
 
 public class LogMessage
 {
-  public int Id { get; set; }
+  [BsonElement("LogMessageId")]
+  public int LogMessageId { get; set; }
   public string Subject { get; set; }
   public string Message { get; set; }
   public LogLevel LogLevel { get; set; }

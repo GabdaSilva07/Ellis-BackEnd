@@ -2,7 +2,7 @@
 
 namespace MongoDb;
 
-public class MongoDbConnection
+public abstract class MongoDbConnection
 {
     private readonly string _connectionString;
     protected readonly MongoClient _mongoClient;

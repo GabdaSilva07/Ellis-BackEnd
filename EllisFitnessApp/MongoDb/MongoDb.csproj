@@ -12,10 +12,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Commands\" />
-      <Folder Include="Factories\" />
       <Folder Include="Queries\" />
-      <Folder Include="QueryOptions\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
 </Project>

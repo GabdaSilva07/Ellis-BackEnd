@@ -9,6 +9,7 @@ namespace Logger;
 public class Logger : ILogger
 {
     private readonly LogLevel _LogLevel;
+    
 
     private readonly ICommandFactory<LogMessage, LogMessage> _LogMessageCommandFactory;
     private readonly LogSource _LogSource;
@@ -18,6 +19,7 @@ public class Logger : ILogger
     public Logger()
     {
     }
+    
 
     public Logger(LogSource logSource, ICommandFactory<LogMessage, LogMessage> commandFactory,
         LogLevel logLevel = LogLevel.Debug)
@@ -63,6 +65,7 @@ public class Logger : ILogger
 
         switch (message.LogLevel)
         {
+            
         }
     }
 
