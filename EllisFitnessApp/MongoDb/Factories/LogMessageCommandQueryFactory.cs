@@ -7,7 +7,7 @@ public class LogMessageCommandQueryFactory : ICommandFactory<LogMessage, LogMess
 {
     public ICommand<LogMessage, LogMessage> CreateInsertCommand()
     {
-        throw new NotImplementedException();
+        
     }
 
     public ICommand<LogMessage, LogMessage> CreateUpdateCommand()
