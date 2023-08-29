@@ -19,13 +19,13 @@ public class LogMessageCommandQueryFactory : ICommandFactory<LogMessage, LogMess
     }
 
     
-    public ICommand<LogMessage, LogMessage> CreateInsertCommand()
+    public async Task<ICommand<LogMessage, LogMessage>> CreateInsertCommand()
     {
         return new InsertCommand<LogMessage>(_ConnectionString, _DatabaseName, _CollectionName);
     }
 
     public ICommand<LogMessage, LogMessage> CreateUpdateCommand()
-    {
+    {   
         throw new NotImplementedException();
     }
 

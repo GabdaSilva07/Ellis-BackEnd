@@ -4,7 +4,7 @@ using Serilog;
 using Serilog.Events;
 using ILogger = Domain.Logger.Interface.ILogger;
 
-namespace Logger;
+namespace Local.Logger;
 
 public class Logger : ILogger
 {
@@ -95,7 +95,7 @@ public class Logger : ILogger
             TimeStamp = DateTime.Now
         };
 
-        await _LogMessageCommandFactory.ExecuteAsync(logMessage);
+        await _LogMessageCommandFactory.CreateInsertCommand();
     }
 
     private void LogToDatabase(LogMessage logMessage)

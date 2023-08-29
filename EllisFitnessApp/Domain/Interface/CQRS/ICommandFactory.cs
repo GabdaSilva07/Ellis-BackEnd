@@ -2,7 +2,7 @@ namespace Domain.Logger.Interface.CQRS;
 
 public interface ICommandFactory<T, K>
 {
-    ICommand<T, K> CreateInsertCommand();
+    Task<ICommand<T, K>> CreateInsertCommand();
 
     ICommand<T, K> CreateUpdateCommand();
 
