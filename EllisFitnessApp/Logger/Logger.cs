@@ -1,5 +1,6 @@
 ﻿using Domain.Logger.Interface.CQRS;
 using Domain.Models.Logger;
+using MongoDb.Factories;
 using Serilog;
 using Serilog.Events;
 using ILogger = Domain.Logger.Interface.ILogger;
@@ -11,7 +12,7 @@ public class Logger : ILogger
     private readonly LogLevel _LogLevel;
     
 
-    private readonly ICommandFactory<LogMessage, LogMessage> _LogMessageCommandFactory;
+    private readonly LogMessageCommandQueryFactory _LogMessageFactory;
     private readonly LogSource _LogSource;
     private readonly Serilog.ILogger _SerilogConsoleLogger;
     private readonly Serilog.ILogger _SerilogDatabaseLogger;
@@ -21,11 +22,11 @@ public class Logger : ILogger
     }
     
 
-    public Logger(LogSource logSource, ICommandFactory<LogMessage, LogMessage> commandFactory,
+    public Logger(LogSource logSource, LogMessageCommandQueryFactory commandFactory,
         LogLevel logLevel = LogLevel.Debug)
     {
         _LogSource = logSource;
-        _LogMessageCommandFactory = commandFactory;
+        _LogMessageFactory = commandFactory;
         _LogLevel = logLevel;
 
         var minimumSerilogLogLevel = LogEventLevel.Debug;
@@ -95,14 +96,14 @@ public class Logger : ILogger
             TimeStamp = DateTime.Now
         };
 
-        await _LogMessageCommandFactory.CreateInsertCommand();
+        await _LogMessageFactory.CreateInsertCommand();
     }
 
     private void LogToDatabase(LogMessage logMessage)
     {
         ThreadPool.QueueUserWorkItem(async state =>
         {
-            await _LogMessageCommandFactory.CreateInsertCommand();
+            await _LogMessageFactory.CreateInsertCommand();
         });
     }
 }
