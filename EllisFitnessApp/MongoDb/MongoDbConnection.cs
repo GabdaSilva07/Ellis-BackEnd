@@ -10,6 +10,7 @@ public abstract class MongoDbConnection
 
     public MongoDbConnection()
     {
+        _connectionString = "defaultConnectionString";
     }
 
     public MongoDbConnection(string connectionString, string databaseName)
