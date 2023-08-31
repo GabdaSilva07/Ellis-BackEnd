@@ -39,3 +39,5 @@ app.MapControllers();
 
 app.Run();
 
+logger.Log("testing", LogLevel.Debug, false);
+

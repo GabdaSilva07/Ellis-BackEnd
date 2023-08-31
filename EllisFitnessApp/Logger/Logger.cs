@@ -94,9 +94,8 @@ public class Logger : ILogger
 
     public void Log(LogMessage message, bool logToDatabase)
     {
-        
-        Log(new LogMessage { Message = message.Message, LogLevel = message.LogLevel },
-            logToDatabase);
+
+        LogAsync(message, logToDatabase).GetAwaiter().GetResult();
     }
 
     public void Log(string message, LogLevel logLevel, bool logToDatabase)
@@ -105,25 +104,11 @@ public class Logger : ILogger
             logToDatabase);
     }
 
-    private async Task LogError()
-    {
-        var logMessage = new LogMessage
-        {
-            Subject = "Error",
-            Message = "Error",
-            LogLevel = LogLevel.Error,
-            LogSource = _LogSource,
-            TimeStamp = DateTime.Now
-        };
-
-        await _LogMessageFactory.CreateInsertCommand();
-    }
-
     private async Task LogDebugAsync(LogMessage message, bool logToDatabase)
     {
         await Task.Factory.StartNew(() =>
         {
-            _SerilogConsoleLogger.Debug(message.Message);
+            _SerilogConsoleLogger.Debug(message.Message ?? string.Empty);
             if (logToDatabase) LogToDatabase(message);
         });
     }
@@ -132,7 +117,7 @@ public class Logger : ILogger
     {
         await Task.Factory.StartNew(() =>
         {
-            _SerilogConsoleLogger.Information(message.Message);
+            _SerilogConsoleLogger.Information(message.Message ?? string.Empty);
             if (logToDatabase) LogToDatabase(message);
         });
     }
@@ -141,16 +126,16 @@ public class Logger : ILogger
     {
         await Task.Factory.StartNew(() =>
         {
-            _SerilogConsoleLogger.Warning(message.Message);
+            _SerilogConsoleLogger.Warning(message.Message ?? string.Empty);
             if (logToDatabase) LogToDatabase(message);
         });
     }
 
-    private async Task LogErrorAsync(LogMessage message, bool logToDatabase)
+    private async Task LogErrorAsync(LogMessage message, bool logToDatabase )
     {
         await Task.Factory.StartNew(() =>
         {
-            _SerilogConsoleLogger.Error(message.Message);
+            _SerilogConsoleLogger.Error(message.Message ?? string.Empty);
             if (logToDatabase) LogToDatabase(message);
         });
     }
@@ -159,7 +144,7 @@ public class Logger : ILogger
     {
         await Task.Factory.StartNew(() =>
         {
-            _SerilogConsoleLogger.Fatal(message.Message);
+            _SerilogConsoleLogger.Fatal(message.Message ?? string.Empty);
             if (logToDatabase) LogToDatabase(message);
         });
     }
