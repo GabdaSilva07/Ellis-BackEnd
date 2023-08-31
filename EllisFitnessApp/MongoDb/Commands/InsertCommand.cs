@@ -6,14 +6,13 @@ namespace MongoDb.Commands;
 
 public class InsertCommand<T> : MongoDbConnection, ICommand<T, T> where T : class
 {
-    IMongoCollection<T> _collection;
+    readonly IMongoCollection<T> _collection;
 
     public InsertCommand(string connectionString, string databaseName, string collectionName) : base(connectionString, databaseName)
     {
         _collection = _database.GetCollection<T>(collectionName);
     }
     
-
     public async Task<T> ExecuteAsync(T data)
     {
         await _collection.InsertOneAsync(data);

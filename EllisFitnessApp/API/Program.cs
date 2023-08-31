@@ -1,3 +1,4 @@
+using DnsClient.Internal;
 using Domain.Logger.Interface.CQRS;
 using Domain.Models.Logger;
 using MongoDb.Factories;
@@ -19,6 +20,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+logger.LogAsync("Testing", LogLevel.Debug, true);
 
 var app = builder.Build();
 
