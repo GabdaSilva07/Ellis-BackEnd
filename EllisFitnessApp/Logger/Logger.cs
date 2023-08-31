@@ -10,7 +10,7 @@ namespace Local.Logger;
 public class Logger : ILogger
 {
     private readonly LogLevel _LogLevel;
-    
+
 
     private readonly LogMessageCommandQueryFactory _LogMessageFactory;
     private readonly LogSource _LogSource;
@@ -20,7 +20,7 @@ public class Logger : ILogger
     public Logger()
     {
     }
-    
+
 
     public Logger(LogSource logSource, LogMessageCommandQueryFactory commandFactory,
         LogLevel logLevel = LogLevel.Debug)
@@ -66,23 +66,43 @@ public class Logger : ILogger
 
         switch (message.LogLevel)
         {
-            
+            case LogLevel.Debug:
+                await LogDebugAsync(message, logToDatabase);
+                break;
+            case LogLevel.Information:
+                await LogInformationAsync(message, logToDatabase);
+                break;
+            case LogLevel.Error:
+                await LogErrorAsync(message, logToDatabase);
+                break;
+            case LogLevel.Warning:
+                await LogWarningAsync(message, logToDatabase);
+                break;
+            case LogLevel.Fatal:
+                await LogFatalAsync(message, logToDatabase);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
     public Task LogAsync(string message, LogLevel logLevel, bool logToDatabase)
     {
-        throw new NotImplementedException();
+        return LogAsync(new LogMessage { Message = message, LogLevel = logLevel },
+            logToDatabase);
     }
 
     public void Log(LogMessage message, bool logToDatabase)
     {
-        throw new NotImplementedException();
+        
+        Log(new LogMessage { Message = message.Message, LogLevel = message.LogLevel },
+            logToDatabase);
     }
 
     public void Log(string message, LogLevel logLevel, bool logToDatabase)
     {
-        throw new NotImplementedException();
+        Log(new LogMessage { Message = message, LogLevel = logLevel },
+            logToDatabase);
     }
 
     private async Task LogError()
@@ -98,6 +118,52 @@ public class Logger : ILogger
 
         await _LogMessageFactory.CreateInsertCommand();
     }
+
+    private async Task LogDebugAsync(LogMessage message, bool logToDatabase)
+    {
+        await Task.Factory.StartNew(() =>
+        {
+            _SerilogConsoleLogger.Debug(message.Message);
+            if (logToDatabase) LogToDatabase(message);
+        });
+    }
+
+    private async Task LogInformationAsync(LogMessage message, bool logToDatabase)
+    {
+        await Task.Factory.StartNew(() =>
+        {
+            _SerilogConsoleLogger.Information(message.Message);
+            if (logToDatabase) LogToDatabase(message);
+        });
+    }
+
+    private async Task LogWarningAsync(LogMessage message, bool logToDatabase)
+    {
+        await Task.Factory.StartNew(() =>
+        {
+            _SerilogConsoleLogger.Warning(message.Message);
+            if (logToDatabase) LogToDatabase(message);
+        });
+    }
+
+    private async Task LogErrorAsync(LogMessage message, bool logToDatabase)
+    {
+        await Task.Factory.StartNew(() =>
+        {
+            _SerilogConsoleLogger.Error(message.Message);
+            if (logToDatabase) LogToDatabase(message);
+        });
+    }
+
+    private async Task LogFatalAsync(LogMessage message, bool logToDatabase)
+    {
+        await Task.Factory.StartNew(() =>
+        {
+            _SerilogConsoleLogger.Fatal(message.Message);
+            if (logToDatabase) LogToDatabase(message);
+        });
+    }
+
 
     private void LogToDatabase(LogMessage logMessage)
     {
