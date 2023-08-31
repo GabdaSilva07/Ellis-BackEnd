@@ -4,7 +4,7 @@ using MongoDb.Factories;
 using ILogger = Domain.Logger.Interface.ILogger;
 using Logger = Local.Logger.Logger;
 using LogLevel = Domain.Models.Logger.LogLevel;
-
+using MongoDb.Factories;
 
 var builder = WebApplication.CreateBuilder(args);
 
