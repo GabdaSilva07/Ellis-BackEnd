@@ -29,8 +29,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-logger.Log("testing", LogLevel.Debug, false);
-
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -38,6 +36,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-logger.Log("testing", LogLevel.Debug, false);
 
