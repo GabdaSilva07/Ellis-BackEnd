@@ -1,5 +1,6 @@
 ﻿using Domain.Logger.Interface.CQRS;
 using Domain.Models.Logger;
+using Domain.Models.Logger.LogMessage;
 using MongoDb.Factories;
 using Serilog;
 using Serilog.Events;
@@ -150,22 +151,17 @@ public class Logger : ILogger
     }
 
 
-    private void LogToDatabase(LogMessage logMessage)
+    private async Task LogToDatabase(LogMessage logMessage)
     {
-        ThreadPool.QueueUserWorkItem(async _ =>
+        try
         {
-            try
-            {
-                Task.Factory.StartNew(async () =>
-                {
-                    var command = await _LogMessageFactory.CreateInsertCommand();
-                    await command.ExecuteAsync(logMessage);
-                });
-            }
-            catch (Exception e)
-            {
-                _SerilogConsoleLogger.Error(e, "Error logging to database");
-            }
-        });
+            var command = await _LogMessageFactory.CreateInsertCommand();
+            await command.ExecuteAsync(logMessage);
+        }
+        catch (Exception e)
+        {
+            _SerilogConsoleLogger.Error(e, "Error logging to database");
+        }
     }
+
 }

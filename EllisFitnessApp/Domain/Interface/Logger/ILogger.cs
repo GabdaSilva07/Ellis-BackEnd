@@ -1,4 +1,5 @@
 using Domain.Models.Logger;
+using Domain.Models.Logger.LogMessage;
 
 namespace Domain.Logger.Interface;
 

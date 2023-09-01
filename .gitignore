@@ -685,3 +685,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+
+EllisFitnessApp/API/appsettings.Development.json

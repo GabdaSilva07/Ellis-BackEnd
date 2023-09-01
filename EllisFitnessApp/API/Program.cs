@@ -2,6 +2,7 @@ using DnsClient.Internal;
 using Domain.Logger.Interface.CQRS;
 using Domain.Models.Config;
 using Domain.Models.Logger;
+using Domain.Models.Logger.LogMessage;
 using Microsoft.Extensions.Options;
 using MongoDb.Factories;
 using ILogger = Domain.Logger.Interface.ILogger;
@@ -14,7 +15,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Get the configuration from appsettings.json
 var config = builder.Configuration;
 
-// Check if is development or production environment if development use app-settings.Development.json
 var environment = builder.Environment;
 if (environment.IsDevelopment())
 {
@@ -22,25 +22,23 @@ if (environment.IsDevelopment())
 }
 
 // Get MongoDB configuration and attach to MongoConfig
-var mongoConfig = config.GetSection("MongoConfig").Get<MongoConfig>();
-
-
-// Add services to the container.
+var mongoConfig = config.GetSection("MongoDB").Get<MongoConfig>();
 
 ILogger logger = new Logger(LogSource.Api,
     new LogMessageCommandQueryFactory( Options.Create(mongoConfig), "LogMessage"),
     LogLevel.Debug);
 
+// Add services to the container.
 
+builder.Services.Configure<MongoConfig>(config.GetSection("MongoDB"));
+builder.Services.AddSingleton<MongoConfig>();
+builder.Services.AddSingleton<ILogger>(logger);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-
-logger.LogAsync(new LogMessage{Message = "Hello World"}, true);
 
 var app = builder.Build();
 

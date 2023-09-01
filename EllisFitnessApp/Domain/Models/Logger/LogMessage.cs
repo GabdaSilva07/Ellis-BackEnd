@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Domain.Models.Logger;
+namespace Domain.Models.Logger.LogMessage;
 
 public class LogMessage
 {

@@ -19,7 +19,7 @@ public abstract class MongoDbConnection
     public MongoDbConnection(IOptions<MongoConfig> config)
     {
         _mongoClient = new MongoClient(config.Value.ConnectionString);
-        _database = _mongoClient.GetDatabase(config.Value.Database);
+        _database = _mongoClient.GetDatabase(config.Value.DatabaseName);
     }
 
 }
