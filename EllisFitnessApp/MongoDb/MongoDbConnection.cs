@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver;
+﻿using Domain.Models.Config;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace MongoDb;
 
@@ -13,10 +15,11 @@ public abstract class MongoDbConnection
         _connectionString = "defaultConnectionString";
     }
 
-    public MongoDbConnection(string connectionString, string databaseName)
+    
+    public MongoDbConnection(IOptions<MongoConfig> config)
     {
-        _mongoClient = new MongoClient(connectionString);
-        _database = _mongoClient.GetDatabase(databaseName);
-
+        _mongoClient = new MongoClient(config.Value.ConnectionString);
+        _database = _mongoClient.GetDatabase(config.Value.Database);
     }
+
 }

@@ -1,27 +1,27 @@
 using Amazon.Runtime.Internal.Util;
 using Domain.Logger.Interface.CQRS;
+using Domain.Models.Config;
+using Microsoft.Extensions.Options;
 using MongoDb.Commands;
 
 namespace MongoDb.Factories;
 
 public class LogMessageCommandQueryFactory : ICommandFactory<LogMessage, LogMessage>, IQueryFactory<LogMessage>
 {
-
-    private readonly string _ConnectionString;
-    private readonly string _DatabaseName;
-    private readonly string _CollectionName;
     
-    public LogMessageCommandQueryFactory(string connectionString, string databaseName, string collectionName)
+    private readonly IOptions<MongoConfig> _Config;
+    private readonly string _collectionName;
+    
+    public LogMessageCommandQueryFactory(IOptions<MongoConfig> config, string collectionName)
     {
-        _ConnectionString = connectionString;
-        _DatabaseName = databaseName;
-        _CollectionName = collectionName;
+        _Config = config;
+        _collectionName = collectionName;
     }
 
     
     public async Task<ICommand<LogMessage, LogMessage>> CreateInsertCommand()
     {
-        return new InsertCommand<LogMessage>(_ConnectionString, _DatabaseName, _CollectionName);
+        return new InsertCommand<LogMessage>(_Config, _collectionName);
     }
 
     public ICommand<LogMessage, LogMessage> CreateUpdateCommand()

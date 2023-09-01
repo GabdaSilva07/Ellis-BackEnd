@@ -106,55 +106,66 @@ public class Logger : ILogger
 
     private async Task LogDebugAsync(LogMessage message, bool logToDatabase)
     {
-        await Task.Factory.StartNew(() =>
+        await Task.Factory.StartNew(async () =>
         {
             _SerilogConsoleLogger.Debug(message.Message ?? string.Empty);
-            if (logToDatabase) LogToDatabase(message);
+            if (logToDatabase) await LogToDatabase(message);
         });
     }
 
     private async Task LogInformationAsync(LogMessage message, bool logToDatabase)
     {
-        await Task.Factory.StartNew(() =>
+        await Task.Factory.StartNew(async () =>
         {
             _SerilogConsoleLogger.Information(message.Message ?? string.Empty);
-            if (logToDatabase) LogToDatabase(message);
+            if (logToDatabase) await LogToDatabase(message);
         });
     }
 
     private async Task LogWarningAsync(LogMessage message, bool logToDatabase)
     {
-        await Task.Factory.StartNew(() =>
+        await Task.Factory.StartNew(async () =>
         {
             _SerilogConsoleLogger.Warning(message.Message ?? string.Empty);
-            if (logToDatabase) LogToDatabase(message);
+            if (logToDatabase) await LogToDatabase(message);
         });
     }
 
     private async Task LogErrorAsync(LogMessage message, bool logToDatabase )
     {
-        await Task.Factory.StartNew(() =>
+        await Task.Factory.StartNew(async () =>
         {
             _SerilogConsoleLogger.Error(message.Message ?? string.Empty);
-            if (logToDatabase) LogToDatabase(message);
+            if (logToDatabase) await LogToDatabase(message);
         });
     }
 
     private async Task LogFatalAsync(LogMessage message, bool logToDatabase)
     {
-        await Task.Factory.StartNew(() =>
+        await Task.Factory.StartNew(async () =>
         {
             _SerilogConsoleLogger.Fatal(message.Message ?? string.Empty);
-            if (logToDatabase) LogToDatabase(message);
+            if (logToDatabase) await LogToDatabase(message);
         });
     }
 
 
     private void LogToDatabase(LogMessage logMessage)
     {
-        ThreadPool.QueueUserWorkItem(async state =>
+        ThreadPool.QueueUserWorkItem(async _ =>
         {
-            await _LogMessageFactory.CreateInsertCommand();
+            try
+            {
+                Task.Factory.StartNew(async () =>
+                {
+                    var command = await _LogMessageFactory.CreateInsertCommand();
+                    await command.ExecuteAsync(logMessage);
+                });
+            }
+            catch (Exception e)
+            {
+                _SerilogConsoleLogger.Error(e, "Error logging to database");
+            }
         });
     }
 }
