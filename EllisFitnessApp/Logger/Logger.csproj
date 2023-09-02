@@ -6,4 +6,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\MongoDb\MongoDb.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Serilog" Version="3.0.1" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    </ItemGroup>
+
 </Project>
