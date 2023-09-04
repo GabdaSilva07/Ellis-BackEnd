@@ -1,8 +1,8 @@
-using Domain.Models.UserRoles;
+using Domain.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Domain.Models.User;
+namespace Domain.Models;
 
 public class User
 {

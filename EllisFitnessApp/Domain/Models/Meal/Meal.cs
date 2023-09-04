@@ -1,6 +1,6 @@
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Domain.Models.Meal;
+namespace Domain.Models;
 
 public class Meal
 {
@@ -8,7 +8,7 @@ public class Meal
     public string MealName { get; set; }
 
     [BsonElement("FoodItems")]
-    public List<FoodItem.FoodItem> FoodItems { get; set; }
+    public List<FoodItem> FoodItems { get; set; }
 
     [BsonIgnore]
     public int TotalCalories

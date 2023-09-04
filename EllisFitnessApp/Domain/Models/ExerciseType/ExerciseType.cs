@@ -1,4 +1,4 @@
-namespace Domain.Models.ExerciseType;
+namespace Domain.Models;
 
 public enum ExerciseType
 {

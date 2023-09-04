@@ -1,6 +1,6 @@
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Domain.Models.FoodItem;
+namespace Domain.Models;
 
 public class FoodItem
 {
