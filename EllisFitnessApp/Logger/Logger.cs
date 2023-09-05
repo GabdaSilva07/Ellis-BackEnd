@@ -59,33 +59,30 @@ public class Logger : ILogger
             .CreateLogger();
     }
 
-    public async Task LogAsync(LogMessage message, bool logToDatabase)
-    {
-        message.TimeStamp = DateTime.Now;
-        message.LogSource = _LogSource;
-        var prefix = !string.IsNullOrEmpty(message.Subject) ? $"{message.Subject} - " : "";
+public async Task LogAsync(LogMessage message, bool logToDatabase)
+{
+    message.TimeStamp = DateTime.Now;
+    message.LogSource = _LogSource;
+    var prefix = !string.IsNullOrEmpty(message.Subject) ? $"{message.Subject} - " : "";
 
-        switch (message.LogLevel)
-        {
-            case LogLevel.Debug:
-                await LogDebugAsync(message, logToDatabase);
-                break;
-            case LogLevel.Information:
-                await LogInformationAsync(message, logToDatabase);
-                break;
-            case LogLevel.Error:
-                await LogErrorAsync(message, logToDatabase);
-                break;
-            case LogLevel.Warning:
-                await LogWarningAsync(message, logToDatabase);
-                break;
-            case LogLevel.Fatal:
-                await LogFatalAsync(message, logToDatabase);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+    var logFunctions = new Dictionary<LogLevel, Func<LogMessage, bool, Task>>
+    {
+        { LogLevel.Debug, LogDebugAsync },
+        { LogLevel.Information, LogInformationAsync },
+        { LogLevel.Error, LogErrorAsync },
+        { LogLevel.Warning, LogWarningAsync },
+        { LogLevel.Fatal, LogFatalAsync }
+    };
+
+    if (logFunctions.TryGetValue(message.LogLevel, out var logFunction))
+    {
+        await logFunction(message, logToDatabase);
     }
+    else
+    {
+        throw new ArgumentOutOfRangeException();
+    }
+}
 
     public Task LogAsync(string message, LogLevel logLevel, bool logToDatabase)
     {
@@ -105,14 +102,11 @@ public class Logger : ILogger
             logToDatabase);
     }
 
-    private async Task LogDebugAsync(LogMessage message, bool logToDatabase)
-    {
-        await Task.Factory.StartNew(async () =>
-        {
-            _SerilogConsoleLogger.Debug(message.Message ?? string.Empty);
-            if (logToDatabase) await LogToDatabase(message);
-        });
-    }
+private async Task LogDebugAsync(LogMessage message, bool logToDatabase)
+{
+    _SerilogConsoleLogger.Debug(message.Message ?? string.Empty);
+    if (logToDatabase) await LogToDatabase(message);
+}
 
     private async Task LogInformationAsync(LogMessage message, bool logToDatabase)
     {
