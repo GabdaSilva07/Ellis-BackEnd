@@ -2,7 +2,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.Models.Trainee;
 
-public class Trainee : User.User
+public class Trainee : User
 {
     [BsonElement("AssignedTrainerId")]
     public string? AssignedTrainerId { get; set; }
