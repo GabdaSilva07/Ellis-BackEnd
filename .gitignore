@@ -687,3 +687,7 @@ FodyWeavers.xsd
 
 
 EllisFitnessApp/API/appsettings.Development.json
+
+EllisFitnessApp/API/FireBase.json
+
+EllisFitnessApp/API/Test/.env
