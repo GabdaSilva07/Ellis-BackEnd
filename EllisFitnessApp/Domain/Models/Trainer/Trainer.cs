@@ -1,9 +1,9 @@
 using MongoDB.Bson.Serialization.Attributes;
-using User = Domain.Models.User.User;
+using Domain.Models;
 
-namespace Domain.Models.Trainer;
+namespace Domain.Models;
 
-public class Trainer : User.User
+public class Trainer : User
 {
     
     [BsonElement("ClientIds")]

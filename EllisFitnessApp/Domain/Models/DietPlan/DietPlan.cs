@@ -19,5 +19,5 @@ public class DietPlan
     public int MaxCalories { get; set; }
 
     [BsonElement("Meals")]
-    public List<Meal.Meal> Meals { get; set; }
+    public List<Meal> Meals { get; set; }
 }

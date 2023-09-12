@@ -1,6 +1,6 @@
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Domain.Models.Workout;
+namespace Domain.Models;
 
 public class Workout
 {
@@ -8,8 +8,8 @@ public class Workout
     public string ExerciseName { get; set; }
 
     [BsonElement("ExerciseType")]
-    public ExerciseType.ExerciseType ExerciseType { get; set; }
+    public ExerciseType ExerciseType { get; set; }
 
     [BsonElement("Sets")]
-    public List<Set.Set> Sets { get; set; }
+    public List<Set> Sets { get; set; }
 }

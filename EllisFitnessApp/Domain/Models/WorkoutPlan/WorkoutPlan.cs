@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Domain.Models.WorkoutPlan;
+namespace Domain.Models;
 
 public class WorkoutPlan
 {
@@ -16,5 +16,5 @@ public class WorkoutPlan
     public string Description { get; set; }
 
     [BsonElement("Workouts")]
-    public List<Workout.Workout> Workouts { get; set; }
+    public List<Workout> Workouts { get; set; }
 }
