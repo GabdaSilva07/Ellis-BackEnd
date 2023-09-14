@@ -1,8 +1,9 @@
 using Domain.Models.Auth;
+using FirebaseAdmin.Auth;
 
 namespace Domain.Interface.Authentification;
 
 public interface IFireBaseAuthentification
 {
-    Task<string> RegisterAsync(AuthRequest authRequest);
+  public Task<FirebaseToken> VerifyIdTokenAsync(string idToken);
 }

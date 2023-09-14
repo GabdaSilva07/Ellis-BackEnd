@@ -1,4 +1,6 @@
+using Authentification;
 using DnsClient.Internal;
+using Domain.Interface.Authentification;
 using Domain.Logger.Interface.CQRS;
 using Domain.Models.Config;
 using Domain.Models.Logger;
@@ -8,7 +10,8 @@ using MongoDb.Factories;
 using ILogger = Domain.Logger.Interface.ILogger;
 using Logger = Local.Logger.Logger;
 using LogLevel = Domain.Models.Logger.LogLevel;
-using MongoDb.Factories;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,10 @@ if (environment.IsDevelopment())
 {
     config.AddJsonFile("appsettings.Development.json");
 }
+
+FirebaseApp.Create(new AppOptions(){
+    Credential = GoogleCredential.FromFile("FireBase.json")
+});
 
 // Get MongoDB configuration and attach to MongoConfig
 var mongoConfig = config.GetSection("MongoDB").Get<MongoConfig>();
@@ -33,6 +40,7 @@ ILogger logger = new Logger(LogSource.Api,
 builder.Services.Configure<MongoConfig>(config.GetSection("MongoDB"));
 builder.Services.AddSingleton<MongoConfig>();
 builder.Services.AddSingleton<ILogger>(logger);
+builder.Services.AddSingleton<IFireBaseAuthentification, FireBaseAuthentification>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

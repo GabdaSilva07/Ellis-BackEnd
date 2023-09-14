@@ -1,13 +1,13 @@
 ﻿using Domain.Interface.Authentification;
 using Domain.Models.Auth;
+using FirebaseAdmin.Auth;
 
 namespace Authentification;
 
 public class FireBaseAuthentification : IFireBaseAuthentification
 {
-    public Task<string> RegisterAsync(AuthRequest authRequest)
+    public async Task<FirebaseToken> VerifyIdTokenAsync(string idToken)
     {
-        throw new NotImplementedException();
+        return await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(idToken);
     }
-
 }
