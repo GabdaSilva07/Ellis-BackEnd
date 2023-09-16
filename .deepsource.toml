@@ -1,6 +1,13 @@
 version = 1
 
 [[analyzers]]
+name = "javascript"
+
+  [analyzers.meta]
+  plugins = ["react"]
+  environment = ["nodejs"]
+
+[[analyzers]]
 name = "docker"
 
 [[analyzers]]
@@ -8,3 +15,6 @@ name = "csharp"
 
 [[transformers]]
 name = "dotnet-format"
+
+[[transformers]]
+name = "prettier"
