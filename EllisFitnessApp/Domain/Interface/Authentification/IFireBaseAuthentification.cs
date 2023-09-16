@@ -5,5 +5,5 @@ namespace Domain.Interface.Authentification;
 
 public interface IFireBaseAuthentification
 {
-  public Task<FirebaseToken> VerifyIdTokenAsync(string idToken);
+    public Task<FirebaseToken> VerifyIdTokenAsync(string idToken);
 }

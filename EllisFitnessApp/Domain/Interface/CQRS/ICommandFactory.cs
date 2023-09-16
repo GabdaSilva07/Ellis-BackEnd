@@ -7,5 +7,5 @@ public interface ICommandFactory<T, K>
     ICommand<T, K> CreateUpdateCommand();
 
     ICommand<T, K> CreateDeleteCommand();
-    
+
 }

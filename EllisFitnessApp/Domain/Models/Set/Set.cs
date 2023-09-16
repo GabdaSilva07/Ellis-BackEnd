@@ -8,8 +8,8 @@ public class Set
     public int Reps { get; set; }
 
     [BsonElement("Weight")]
-    public double? Weight { get; set; } 
+    public double? Weight { get; set; }
 
     [BsonElement("Duration")]
-    public int? Duration { get; set; } 
+    public int? Duration { get; set; }
 }

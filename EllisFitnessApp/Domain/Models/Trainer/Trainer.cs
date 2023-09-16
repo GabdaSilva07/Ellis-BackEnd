@@ -5,7 +5,7 @@ namespace Domain.Models;
 
 public class Trainer : User
 {
-    
+
     [BsonElement("ClientIds")]
     public List<string> ClientIds { get; set; }
 }

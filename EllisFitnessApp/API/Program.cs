@@ -24,7 +24,8 @@ if (environment.IsDevelopment())
     config.AddJsonFile("appsettings.Development.json");
 }
 
-FirebaseApp.Create(new AppOptions(){
+FirebaseApp.Create(new AppOptions()
+{
     Credential = GoogleCredential.FromFile("FireBase.json")
 });
 
@@ -32,7 +33,7 @@ FirebaseApp.Create(new AppOptions(){
 var mongoConfig = config.GetSection("MongoDB").Get<MongoConfig>();
 
 ILogger logger = new Logger(LogSource.Api,
-    new LogMessageCommandQueryFactory( Options.Create(mongoConfig), "LogMessage"),
+    new LogMessageCommandQueryFactory(Options.Create(mongoConfig), "LogMessage"),
     LogLevel.Debug);
 
 // Add services to the container.

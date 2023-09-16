@@ -8,24 +8,24 @@ namespace MongoDb.Factories;
 
 public class LogMessageCommandQueryFactory : ICommandFactory<LogMessage, LogMessage>, IQueryFactory<LogMessage>
 {
-    
+
     private readonly IOptions<MongoConfig> _config;
     private readonly string _collectionName;
-    
+
     public LogMessageCommandQueryFactory(IOptions<MongoConfig> config, string collectionName)
     {
         _config = config;
         _collectionName = collectionName;
     }
 
-    
+
     public async Task<ICommand<LogMessage, LogMessage>> CreateInsertCommand()
     {
         return new InsertCommand<LogMessage>(_config, _collectionName);
     }
 
     public ICommand<LogMessage, LogMessage> CreateUpdateCommand()
-    {   
+    {
         throw new NotImplementedException();
     }
 
