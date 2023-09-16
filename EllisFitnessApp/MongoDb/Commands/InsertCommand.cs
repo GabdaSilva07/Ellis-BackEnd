@@ -14,11 +14,11 @@ public class InsertCommand<T> : MongoDbConnection, ICommand<T, T> where T : clas
     {
         _collection = _database.GetCollection<T>(collectionName);
     }
-    
+
     public async Task<T> ExecuteAsync(T data)
     {
         await _collection.InsertOneAsync(data);
         return await Task.FromResult(data);
     }
-    
+
 }
