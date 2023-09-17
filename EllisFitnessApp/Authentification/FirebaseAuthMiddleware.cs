@@ -33,7 +33,7 @@ public class FirebaseAuthMiddleware
             _logger.Log(
                 new LogMessage 
                 { 
-                    Message = $"Authorization header not found.",
+                    Message = "Authorization header not found.",
                     LogLevel = LogLevel.Debug, 
                 }, 
                 true);
@@ -77,7 +77,7 @@ public class FirebaseAuthMiddleware
             _logger.Log(
                 new LogMessage 
                 { 
-                    Message = $"Invalid token.",
+                    Message = "Invalid token.",
                     LogLevel = LogLevel.Debug, 
                 }, 
                 true);
