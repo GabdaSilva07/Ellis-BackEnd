@@ -12,6 +12,7 @@ using Logger = Local.Logger.Logger;
 using LogLevel = Domain.Models.Logger.LogLevel;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ ILogger logger = new Logger(LogSource.Api,
     new LogMessageCommandQueryFactory( Options.Create(mongoConfig), "LogMessage"),
     LogLevel.Debug);
 
+
+
 // Add services to the container.
 
 builder.Services.Configure<MongoConfig>(config.GetSection("MongoDB"));
@@ -48,6 +51,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
+// Add authentication services to the container.
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = "Firebase";
+    })
+    .AddScheme<AuthenticationSchemeOptions, Authentification.FirebaseAuthenticationHandler>("Firebase", _ => { });
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -57,8 +68,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//Allow swagger to be used without authentication
+app.UseWhen(context => !context.Request.Path.StartsWithSegments("/swagger"), appBuilder =>
+{
+    appBuilder.UseMiddleware<FirebaseAuthMiddleware>();
+});
+
+
+
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
