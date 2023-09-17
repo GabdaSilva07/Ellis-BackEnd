@@ -33,11 +33,11 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
         if (!Request.Headers.ContainsKey("Authorization"))
         {
             _logger.Log(
-                new LogMessage 
-                { 
+                new LogMessage
+                {
                     Message = $"Authorization header not found.",
-                    LogLevel = LogLevel.Debug, 
-                }, 
+                    LogLevel = LogLevel.Debug,
+                },
                 true);
             return AuthenticateResult.Fail("Authorization header not found.");
         }
@@ -48,16 +48,16 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
         try
         {
             var decodedToken = await _fireBaseAuthentification.VerifyIdTokenAsync(idToken);
-        
+
             // Check if the email is verified
             if (!(bool)decodedToken.Claims["email_verified"])
             {
                 _logger.Log(
-                    new LogMessage 
-                    { 
+                    new LogMessage
+                    {
                         Message = $"Email not verified.",
-                        LogLevel = LogLevel.Debug, 
-                    }, 
+                        LogLevel = LogLevel.Debug,
+                    },
                     true);
                 return AuthenticateResult.Fail("Email not verified.");
             }
@@ -70,13 +70,13 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
-            
+
             _logger.Log(
-                new LogMessage 
-                { 
-                    Message = $"Token verification for {idToken} was successful.", 
-                    LogLevel = LogLevel.Debug, 
-                }, 
+                new LogMessage
+                {
+                    Message = $"Token verification for {idToken} was successful.",
+                    LogLevel = LogLevel.Debug,
+                },
                 true);
             return AuthenticateResult.Success(ticket);
         }
