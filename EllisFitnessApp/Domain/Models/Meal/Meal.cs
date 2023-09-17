@@ -13,10 +13,7 @@ public class Meal
     [BsonIgnore]
     public int TotalCalories
     {
-        get
-        {
-            return CalculateTotalCalories();
-        }
+        get => CalculateTotalCalories();
     }
 
     private int CalculateTotalCalories()
