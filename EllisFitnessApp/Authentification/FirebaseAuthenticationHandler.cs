@@ -35,7 +35,7 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
             _logger.Log(
                 new LogMessage 
                 { 
-                    Message = $"Authorization header not found.",
+                    Message = "Authorization header not found.",
                     LogLevel = LogLevel.Debug, 
                 }, 
                 true);
@@ -55,7 +55,7 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
                 _logger.Log(
                     new LogMessage 
                     { 
-                        Message = $"Email not verified.",
+                        Message = "Email not verified.",
                         LogLevel = LogLevel.Debug, 
                     }, 
                     true);
