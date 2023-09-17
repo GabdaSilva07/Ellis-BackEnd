@@ -56,7 +56,7 @@ builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = "Firebase";
     })
-    .AddScheme<AuthenticationSchemeOptions, Authentification.FirebaseAuthenticationHandler>("Firebase", _ => { });
+    .AddScheme<AuthenticationSchemeOptions, FirebaseAuthenticationHandler>("Firebase", _ => { });
 
 
 var app = builder.Build();
