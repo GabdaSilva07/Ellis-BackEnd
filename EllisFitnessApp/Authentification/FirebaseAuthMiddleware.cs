@@ -31,11 +31,11 @@ public class FirebaseAuthMiddleware
         if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
         {
             _logger.Log(
-                new LogMessage
-                {
-                    Message = $"Authorization header not found.",
-                    LogLevel = LogLevel.Debug,
-                },
+                new LogMessage 
+                { 
+                    Message = "Authorization header not found.",
+                    LogLevel = LogLevel.Debug, 
+                }, 
                 true);
             context.Response.StatusCode = 401; // Unauthorized
             return;
@@ -75,11 +75,11 @@ public class FirebaseAuthMiddleware
         catch (FirebaseAuthException)
         {
             _logger.Log(
-                new LogMessage
-                {
-                    Message = $"Invalid token.",
-                    LogLevel = LogLevel.Debug,
-                },
+                new LogMessage 
+                { 
+                    Message = "Invalid token.",
+                    LogLevel = LogLevel.Debug, 
+                }, 
                 true);
             context.Response.StatusCode = 401; // Unauthorized
         }

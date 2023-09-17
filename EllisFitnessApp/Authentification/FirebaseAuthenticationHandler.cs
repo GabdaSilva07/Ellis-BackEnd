@@ -33,11 +33,11 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
         if (!Request.Headers.ContainsKey("Authorization"))
         {
             _logger.Log(
-                new LogMessage
-                {
-                    Message = $"Authorization header not found.",
-                    LogLevel = LogLevel.Debug,
-                },
+                new LogMessage 
+                { 
+                    Message = "Authorization header not found.",
+                    LogLevel = LogLevel.Debug, 
+                }, 
                 true);
             return AuthenticateResult.Fail("Authorization header not found.");
         }
@@ -53,11 +53,11 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
             if (!(bool)decodedToken.Claims["email_verified"])
             {
                 _logger.Log(
-                    new LogMessage
-                    {
-                        Message = $"Email not verified.",
-                        LogLevel = LogLevel.Debug,
-                    },
+                    new LogMessage 
+                    { 
+                        Message = "Email not verified.",
+                        LogLevel = LogLevel.Debug, 
+                    }, 
                     true);
                 return AuthenticateResult.Fail("Email not verified.");
             }
