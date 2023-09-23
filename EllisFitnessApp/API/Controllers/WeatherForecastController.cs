@@ -29,7 +29,7 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
-        
+
         var testMessage = new TestMessage
         {
             Title = "Weather Update",
@@ -37,10 +37,10 @@ public class WeatherForecastController : ControllerBase
             Token = "Your_FCM_Token",
             Topic = "weather_updates"
         };
-        
+
         _firebaseMessagingService.SendMessageAsync(testMessage);
-        
-        
+
+
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateTime.UtcNow.AddDays(index),
