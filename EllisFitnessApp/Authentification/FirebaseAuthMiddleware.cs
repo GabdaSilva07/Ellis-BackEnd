@@ -1,87 +1,87 @@
+using System;
+using System.Linq;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Domain.Interface.Authentification;
 using Domain.Logger.Interface;
 using Domain.Models.Logger;
 using Domain.Models.Logger.LogMessage;
 using FirebaseAdmin.Auth;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Authentification;
-
-public class FirebaseAuthMiddleware
+namespace Authentification
 {
-    private readonly RequestDelegate _next;
-    private readonly IFireBaseAuthentification _fireBaseAuthentification;
-    private readonly ILogger _logger;
-
-    public FirebaseAuthMiddleware(RequestDelegate next, IFireBaseAuthentification fireBaseAuthentification, ILogger logger)
+    public class FirebaseAuthMiddleware
     {
-        _next = next;
-        _logger = logger;
-        _fireBaseAuthentification = fireBaseAuthentification;
-    }
+        private readonly RequestDelegate _next;
+        private readonly IFireBaseAuthentification _fireBaseAuthentification;
+        private readonly ILogger _logger;
+        private const string AuthorizationHeader = "Authorization";
+        private const string BearerPrefix = "Bearer ";
 
-    public async Task InvokeAsync(HttpContext context)
-    {
-        string authHeader = context.Request.Headers["Authorization"];
-
-        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+        public FirebaseAuthMiddleware(RequestDelegate next, IFireBaseAuthentification fireBaseAuthentification, ILogger logger)
         {
-            _logger.Log(
-                new LogMessage
-                {
-                    Message = "Authorization header not found.",
-                    LogLevel = LogLevel.Debug,
-                },
-                true);
-            context.Response.StatusCode = 401; // Unauthorized
-            return;
+            _next = next;
+            _logger = logger;
+            _fireBaseAuthentification = fireBaseAuthentification;
         }
 
-        var idToken = authHeader.Substring("Bearer ".Length).Trim();
-
-        try
+        public async Task InvokeAsync(HttpContext context)
         {
-            var decodedToken = await _fireBaseAuthentification.VerifyIdTokenAsync(idToken);
-
-            // Check user's roles or other claims to verify authorization
-            if (decodedToken.Claims.Any(claim => claim.Key == "role" && claim.Value == "authorized_role"))
+            if (!context.Request.Headers.TryGetValue(AuthorizationHeader, out var authHeader))
             {
-                _logger.Log(
-                    new LogMessage
-                    {
-                        Message = $"User {decodedToken.Uid} is authorized.",
-                        LogLevel = LogLevel.Debug,
-                    },
-                    true);
-                await _next(context);
+                await LogAndSetResponse("Authorization header not found.", LogLevel.Debug, StatusCodes.Status401Unauthorized);
+                return;
             }
-            else
-            {
 
-                _logger.Log(
-                    new LogMessage
-                    {
-                        Message = $"User {decodedToken.Uid} is not authorized.",
-                        LogLevel = LogLevel.Debug,
-                    },
-                    true);
-                context.Response.StatusCode = 403; // Forbidden
+            if (!authHeader.ToString().StartsWith(BearerPrefix))
+            {
+                await LogAndSetResponse("Invalid authorization type. Only Bearer is supported.", LogLevel.Debug, StatusCodes.Status401Unauthorized);
+                return;
             }
-        }
-        catch (FirebaseAuthException)
-        {
-            _logger.Log(
-                new LogMessage
+
+            var idToken = authHeader.ToString().Substring(BearerPrefix.Length).Trim();
+
+            try
+            {
+                FirebaseToken decodedToken = await _fireBaseAuthentification.VerifyIdTokenAsync(idToken).ConfigureAwait(false);
+                if (_next != null)
                 {
-                    Message = "Invalid token.",
-                    LogLevel = LogLevel.Debug,
-                },
-                true);
-            context.Response.StatusCode = 401; // Unauthorized
+                    // Check if the user is authorized before continuing with the middleware pipeline
+                    if (decodedToken.Claims.TryGetValue("email_verified", out object? emailVerified) && emailVerified is bool isEmailVerified && isEmailVerified)
+                    {
+                        _logger.Log(new LogMessage { Message = $"User {decodedToken.Uid} is authorized.", LogLevel = LogLevel.Debug }, true);
+                        await _next(context).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        // If the user is not authorized, log the message and set the response without calling the next middleware
+
+                        // If the user is not authorized, log the message and also build a authentication link and log it
+                        var email = decodedToken.Claims["email"].ToString();
+                        var authLink = await FirebaseAuth.DefaultInstance.GenerateEmailVerificationLinkAsync(email).ConfigureAwait(false);
+
+                        await LogAndSetResponse($"User {decodedToken.Uid} is not authorized.", LogLevel.Debug, StatusCodes.Status403Forbidden);
+                    }
+                }
+            }
+            catch (FirebaseAuthException)
+            {
+                await LogAndSetResponse("Invalid token.", LogLevel.Debug, StatusCodes.Status401Unauthorized);
+            }
+
+            async Task LogAndSetResponse(string message, LogLevel logLevel, int statusCode)
+            {
+                _logger.Log(new LogMessage { Message = message, LogLevel = logLevel }, true);
+                context.Response.StatusCode = statusCode;
+                context.Response.ContentType = "application/json";
+
+                var payload = JsonSerializer.Serialize(new { message });
+                await context.Response.WriteAsync(payload).ConfigureAwait(false);
+            }
         }
     }
 }
