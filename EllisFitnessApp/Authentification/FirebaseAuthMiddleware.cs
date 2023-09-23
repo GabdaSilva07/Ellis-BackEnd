@@ -53,7 +53,7 @@ namespace Authentification
                     // Check if the user is authorized before continuing with the middleware pipeline
                     if (decodedToken.Claims.TryGetValue("email_verified", out object? emailVerified) && emailVerified is bool isEmailVerified && isEmailVerified)
                     {
-                        _logger.Log(new LogMessage { Message = $"User {decodedToken.Uid} is authorized.", LogLevel = LogLevel.Debug }, true);
+                        _logger.Log(new LogMessage { Message = $"User {decodedToken.Uid} is authorized.", LogLevel = LogLevel.Debug }, false);
                         await _next(context).ConfigureAwait(false);
                     }
                     else
@@ -63,6 +63,8 @@ namespace Authentification
                         // If the user is not authorized, log the message and also build a authentication link and log it
                         var email = decodedToken.Claims["email"].ToString();
                         var authLink = await FirebaseAuth.DefaultInstance.GenerateEmailVerificationLinkAsync(email).ConfigureAwait(false);
+
+                        Console.WriteLine(authLink);
 
                         await LogAndSetResponse($"User {decodedToken.Uid} is not authorized.", LogLevel.Debug, StatusCodes.Status403Forbidden);
                     }
@@ -75,7 +77,7 @@ namespace Authentification
 
             async Task LogAndSetResponse(string message, LogLevel logLevel, int statusCode)
             {
-                _logger.Log(new LogMessage { Message = message, LogLevel = logLevel }, true);
+                _logger.Log(new LogMessage { Message = message, LogLevel = logLevel }, false);
                 context.Response.StatusCode = statusCode;
                 context.Response.ContentType = "application/json";
 
