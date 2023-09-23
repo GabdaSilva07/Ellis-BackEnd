@@ -1,6 +1,9 @@
+using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Domain.Interface.Authentification;
 using Domain.Logger.Interface;
 using Domain.Models.Logger;
@@ -44,16 +47,27 @@ namespace Authentification
 
             try
             {
-                var decodedToken = await _fireBaseAuthentification.VerifyIdTokenAsync(idToken).ConfigureAwait(false);
-
-                if (decodedToken.Claims.Any(claim => claim.Key == "role" && claim.Value == "authorized_role"))
+                FirebaseToken decodedToken = await _fireBaseAuthentification.VerifyIdTokenAsync(idToken).ConfigureAwait(false);
+                if (_next != null)
                 {
-                    _logger.Log(new LogMessage { Message = $"User {decodedToken.Uid} is authorized.", LogLevel = LogLevel.Debug }, true);
-                    await _next(context).ConfigureAwait(false);
-                }
-                else
-                {
-                    await LogAndSetResponse($"User {decodedToken.Uid} is not authorized.", LogLevel.Debug, StatusCodes.Status403Forbidden);
+                    // Check if the user is authorized before continuing with the middleware pipeline
+                    if (decodedToken.Claims.TryGetValue("email_verified", out object? emailVerified) && emailVerified is bool isEmailVerified && isEmailVerified)
+                    {
+                        _logger.Log(new LogMessage { Message = $"User {decodedToken.Uid} is authorized.", LogLevel = LogLevel.Debug }, false);
+                        await _next(context).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        // If the user is not authorized, log the message and set the response without calling the next middleware
+                        
+                        // If the user is not authorized, log the message and also build a authentication link and log it
+                        var email = decodedToken.Claims["email"].ToString();
+                        var authLink = await FirebaseAuth.DefaultInstance.GenerateEmailVerificationLinkAsync(email).ConfigureAwait(false);
+                        
+                        Console.WriteLine(authLink);
+                        
+                        await LogAndSetResponse($"User {decodedToken.Uid} is not authorized.", LogLevel.Debug, StatusCodes.Status403Forbidden);
+                    }
                 }
             }
             catch (FirebaseAuthException)
@@ -63,7 +77,7 @@ namespace Authentification
 
             async Task LogAndSetResponse(string message, LogLevel logLevel, int statusCode)
             {
-                _logger.Log(new LogMessage { Message = message, LogLevel = logLevel }, true);
+                _logger.Log(new LogMessage { Message = message, LogLevel = logLevel }, false);
                 context.Response.StatusCode = statusCode;
                 context.Response.ContentType = "application/json";
 
