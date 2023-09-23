@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Logger.Interface;
 using Domain.Models.Logger.LogMessage;
 using ILogger = Domain.Logger.Interface.ILogger;
-using LogLevel = Domain.Models.Logger.LogLevel;
+using LogLevel = Domain.Models.Logger.LogLevel; 
 
 
 namespace API.Controllers.AuthController;
