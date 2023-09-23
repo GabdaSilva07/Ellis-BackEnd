@@ -4,6 +4,6 @@ namespace Domain.Interface.FirebaseMessagingService;
 
 public interface IFirebaseMessagingService<T>
 {
-    Task SendMessageAsync(T message);
+    Task<bool> SendMessageAsync(T message);
 
 };
