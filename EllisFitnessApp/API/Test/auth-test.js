@@ -14,6 +14,7 @@ initializeApp(firebaseConfig);
 const auth = getAuth();
 
 // Test user credentials
+//const email = "testuser1@gmail.com";
 const email = "testuser@gmain.com";
 const password = "155155Gs";
 
@@ -23,7 +24,7 @@ async function signInAndGetToken() {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     const user = userCredential.user;
     const idToken = await user.getIdToken();
