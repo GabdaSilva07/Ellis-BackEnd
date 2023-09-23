@@ -14,6 +14,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Authentification\Authentification.csproj" />
       <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\FCM.Messaging\FCM.Messaging.csproj" />
       <ProjectReference Include="..\MongoDb\MongoDb.csproj" />
         <ProjectReference Include="..\Logger\Logger.csproj" />
     </ItemGroup>
