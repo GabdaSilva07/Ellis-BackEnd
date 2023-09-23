@@ -6,14 +6,14 @@ namespace FCM.Messaging;
 
 public class FirebaseMessagingService<T> : IFirebaseMessagingService<T> where T : IMessageModel
 {
-    public async Task SendMessageAsync<T>(T message) where T : IMessageModel
+    public async Task SendMessageAsync(T message)
     {
         Message Message = ConvertToFirebaseMessage(message);
         
         await FirebaseMessaging.DefaultInstance.SendAsync(Message);
     }
 
-    private Message ConvertToFirebaseMessage<T>(T messageModel) where T : IMessageModel
+    private Message ConvertToFirebaseMessage(T messageModel)
     {
         var firebaseMessage = new Message()
         {
