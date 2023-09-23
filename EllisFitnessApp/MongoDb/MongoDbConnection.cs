@@ -15,7 +15,7 @@ public abstract class MongoDbConnection
         _connectionString = "defaultConnectionString";
     }
 
-    
+
     protected MongoDbConnection(IOptions<MongoConfig> config)
     {
         _mongoClient = new MongoClient(config.Value.ConnectionString);
