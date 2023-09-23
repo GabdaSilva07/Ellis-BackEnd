@@ -1,5 +1,7 @@
+using Domain.Models.Logger.LogMessage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using LogLevel = Domain.Models.Logger.LogLevel;
 
 namespace API.Controllers;
 
@@ -23,6 +25,8 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
+        
+        
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateTime.UtcNow.AddDays(index),
@@ -30,5 +34,6 @@ public class WeatherForecastController : ControllerBase
             Summary = Summaries[Random.Shared.Next(Summaries.Length)]
         })
             .ToArray();
+        
     }
 }
