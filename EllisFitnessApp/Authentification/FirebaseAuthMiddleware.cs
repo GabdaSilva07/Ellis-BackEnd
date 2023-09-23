@@ -27,15 +27,15 @@ public class FirebaseAuthMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         string authHeader = context.Request.Headers["Authorization"];
-        
+
         if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
         {
             _logger.Log(
-                new LogMessage 
-                { 
+                new LogMessage
+                {
                     Message = "Authorization header not found.",
-                    LogLevel = LogLevel.Debug, 
-                }, 
+                    LogLevel = LogLevel.Debug,
+                },
                 true);
             context.Response.StatusCode = 401; // Unauthorized
             return;
@@ -46,28 +46,28 @@ public class FirebaseAuthMiddleware
         try
         {
             var decodedToken = await _fireBaseAuthentification.VerifyIdTokenAsync(idToken);
-            
+
             // Check user's roles or other claims to verify authorization
             if (decodedToken.Claims.Any(claim => claim.Key == "role" && claim.Value == "authorized_role"))
             {
                 _logger.Log(
-                    new LogMessage 
-                    { 
+                    new LogMessage
+                    {
                         Message = $"User {decodedToken.Uid} is authorized.",
-                        LogLevel = LogLevel.Debug, 
-                    }, 
+                        LogLevel = LogLevel.Debug,
+                    },
                     true);
                 await _next(context);
             }
             else
             {
-                
+
                 _logger.Log(
-                    new LogMessage 
-                    { 
+                    new LogMessage
+                    {
                         Message = $"User {decodedToken.Uid} is not authorized.",
-                        LogLevel = LogLevel.Debug, 
-                    }, 
+                        LogLevel = LogLevel.Debug,
+                    },
                     true);
                 context.Response.StatusCode = 403; // Forbidden
             }
@@ -75,11 +75,11 @@ public class FirebaseAuthMiddleware
         catch (FirebaseAuthException)
         {
             _logger.Log(
-                new LogMessage 
-                { 
+                new LogMessage
+                {
                     Message = "Invalid token.",
-                    LogLevel = LogLevel.Debug, 
-                }, 
+                    LogLevel = LogLevel.Debug,
+                },
                 true);
             context.Response.StatusCode = 401; // Unauthorized
         }

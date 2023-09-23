@@ -10,13 +10,13 @@ public abstract class MongoDbConnection
     protected readonly MongoClient _mongoClient;
     protected readonly IMongoDatabase _database;
 
-    public MongoDbConnection()
+    protected MongoDbConnection()
     {
         _connectionString = "defaultConnectionString";
     }
 
-    
-    public MongoDbConnection(IOptions<MongoConfig> config)
+
+    protected MongoDbConnection(IOptions<MongoConfig> config)
     {
         _mongoClient = new MongoClient(config.Value.ConnectionString);
         _database = _mongoClient.GetDatabase(config.Value.DatabaseName);
