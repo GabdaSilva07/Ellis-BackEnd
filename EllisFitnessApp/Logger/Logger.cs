@@ -158,4 +158,18 @@ public class Logger : ILogger
         }
     }
 
+    private Domain.Models.Logger.LogLevel MapLogLevel(Microsoft.Extensions.Logging.LogLevel logLevel)
+    {
+        return logLevel switch
+        {
+            Microsoft.Extensions.Logging.LogLevel.Trace => Domain.Models.Logger.LogLevel.Debug,
+            Microsoft.Extensions.Logging.LogLevel.Debug => Domain.Models.Logger.LogLevel.Debug,
+            Microsoft.Extensions.Logging.LogLevel.Information => Domain.Models.Logger.LogLevel.Information,
+            Microsoft.Extensions.Logging.LogLevel.Warning => Domain.Models.Logger.LogLevel.Warning,
+            Microsoft.Extensions.Logging.LogLevel.Error => Domain.Models.Logger.LogLevel.Error,
+            Microsoft.Extensions.Logging.LogLevel.Critical => Domain.Models.Logger.LogLevel.Fatal,
+            _ => Domain.Models.Logger.LogLevel.Debug,
+        };
+    }
+
 }

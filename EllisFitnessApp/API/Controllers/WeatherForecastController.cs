@@ -1,5 +1,7 @@
+using Domain.Models.Logger.LogMessage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using LogLevel = Domain.Models.Logger.LogLevel;
 
 namespace API.Controllers;
 
@@ -30,5 +32,6 @@ public class WeatherForecastController : ControllerBase
             Summary = Summaries[Random.Shared.Next(Summaries.Length)]
         })
             .ToArray();
+
     }
 }
