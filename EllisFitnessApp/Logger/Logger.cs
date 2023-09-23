@@ -61,7 +61,7 @@ public class Logger : ILogger
 
     public async Task LogAsync(LogMessage message, bool logToDatabase)
     {
-        message.TimeStamp = DateTime.Now;
+        message.TimeStamp = DateTime.UtcNow;
         message.LogSource = _LogSource;
         var prefix = !string.IsNullOrEmpty(message.Subject) ? $"{message.Subject} - " : "";
 
@@ -132,7 +132,7 @@ public class Logger : ILogger
         });
     }
 
-    private async Task LogErrorAsync(LogMessage message, bool logToDatabase )
+    private async Task LogErrorAsync(LogMessage message, bool logToDatabase)
     {
         await Task.Factory.StartNew(async () =>
         {
