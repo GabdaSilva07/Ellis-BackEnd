@@ -9,7 +9,7 @@ public class FirebaseMessagingService<T> : IFirebaseMessagingService<T> where T 
     public async Task SendMessageAsync(T message)
     {
         Message Message = ConvertToFirebaseMessage(message);
-        
+
         await FirebaseMessaging.DefaultInstance.SendAsync(Message);
     }
 
