@@ -1,31 +1,49 @@
 ﻿using Domain.Interface.FirebaseMessagingService;
 using Domain.Messages;
 using FirebaseAdmin.Messaging;
+using System.Net.Http;
+using System.Text;
+using Newtonsoft.Json;
 
-namespace FCM.Messaging;
-
-public class FirebaseMessagingService<T> : IFirebaseMessagingService<T> where T : IMessageModel
+namespace FCM.Messaging
 {
-    public async Task SendMessageAsync(T message)
+    public class FirebaseMessagingService<T> : IFirebaseMessagingService<T> where T : IMessageModel
     {
-        Message Message = ConvertToFirebaseMessage(message);
+        private readonly HttpClient _httpClient;
+        private readonly FirebaseService.FirebaseService _firebaseService;
 
-        await FirebaseMessaging.DefaultInstance.SendAsync(Message);
-    }
-
-    private Message ConvertToFirebaseMessage(T messageModel)
-    {
-        var firebaseMessage = new Message()
+        public FirebaseMessagingService(FirebaseService.FirebaseService firebaseService)
         {
-            Notification = new Notification()
-            {
-                Title = messageModel.Title,
-                Body = messageModel.Body
-            },
-            Token = messageModel.Token,
-            Topic = messageModel.Topic
-        };
+            _httpClient = new HttpClient();
+            _firebaseService = firebaseService;
+        }
 
-        return firebaseMessage;
+        public async Task<bool> SendMessageAsync(T message)
+        {
+            var firebaseMessage = ConvertToFirebaseMessage(message);
+
+            var accessToken = await _firebaseService.GetAccessTokenAsync();  // Get the access token
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            var jsonMessage = JsonConvert.SerializeObject(firebaseMessage);
+            var response = await _httpClient.PostAsync("https://fcm.googleapis.com/v1/projects/your-project-id/messages:send", new StringContent(jsonMessage, Encoding.UTF8, "application/json"));
+            return response.IsSuccessStatusCode;
+        }
+
+        private Message ConvertToFirebaseMessage(T messageModel)
+        {
+            var firebaseMessage = new Message()
+            {
+                Notification = new Notification()
+                {
+                    Title = messageModel.Title,
+                    Body = messageModel.Body
+                },
+                Token = messageModel.Token,
+                Topic = messageModel.Topic
+            };
+
+            return firebaseMessage;
+        }
     }
 }
