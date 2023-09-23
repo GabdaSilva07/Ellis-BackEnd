@@ -1,10 +1,12 @@
 using Authentification;
 using DnsClient.Internal;
 using Domain.Interface.Authentification;
+using Domain.Interface.FirebaseMessagingService;
 using Domain.Logger.Interface.CQRS;
 using Domain.Models.Config;
 using Domain.Models.Logger;
 using Domain.Models.Logger.LogMessage;
+using FCM.Messaging;
 using Microsoft.Extensions.Options;
 using MongoDb.Factories;
 using ILogger = Domain.Logger.Interface.ILogger;
@@ -13,6 +15,7 @@ using LogLevel = Domain.Models.Logger.LogLevel;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication;
+using Domain.Messages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +48,7 @@ builder.Services.Configure<MongoConfig>(config.GetSection("MongoDB"));
 builder.Services.AddSingleton<MongoConfig>();
 builder.Services.AddSingleton<ILogger>(logger);
 builder.Services.AddSingleton<IFireBaseAuthentification, FireBaseAuthentification>();
+builder.Services.AddSingleton<IFirebaseMessagingService<IMessageModel>, FirebaseMessagingService<IMessageModel>>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
