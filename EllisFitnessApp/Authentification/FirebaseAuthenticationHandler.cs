@@ -7,15 +7,12 @@ using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ILogger = Domain.Logger.Interface.ILogger;
-using LogLevel = Domain.Models.Logger.LogLevel;
 
 namespace Authentification;
 
 public class FirebaseAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     private readonly IFireBaseAuthentification _fireBaseAuthentification;
-    private readonly ILogger _logger;
 
     public FirebaseAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -26,19 +23,13 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
         : base(options, logger, encoder, clock)
     {
         _fireBaseAuthentification = fireBaseAuthentification;
+
     }
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.ContainsKey("Authorization"))
         {
-            _logger.Log(
-                new LogMessage
-                {
-                    Message = "Authorization header not found.",
-                    LogLevel = LogLevel.Debug,
-                },
-                true);
             return AuthenticateResult.Fail("Authorization header not found.");
         }
 
@@ -52,13 +43,6 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
             // Check if the email is verified
             if (!(bool)decodedToken.Claims["email_verified"])
             {
-                _logger.Log(
-                    new LogMessage
-                    {
-                        Message = "Email not verified.",
-                        LogLevel = LogLevel.Debug,
-                    },
-                    true);
                 return AuthenticateResult.Fail("Email not verified.");
             }
 
@@ -70,14 +54,7 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
-
-            _logger.Log(
-                new LogMessage
-                {
-                    Message = $"Token verification for {idToken} was successful.",
-                    LogLevel = LogLevel.Debug,
-                },
-                true);
+            
             return AuthenticateResult.Success(ticket);
         }
         catch (FirebaseAuthException)

@@ -40,10 +40,7 @@ ILogger logger = new Logger(LogSource.Api,
     new LogMessageCommandQueryFactory(Options.Create(mongoConfig), "LogMessage"),
     LogLevel.Debug);
 
-
-
 // Add services to the container.
-
 builder.Services.Configure<MongoConfig>(config.GetSection("MongoDB"));
 builder.Services.AddSingleton<MongoConfig>();
 builder.Services.AddSingleton<ILogger>(logger);
@@ -55,14 +52,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 // Add authentication services to the container.
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = "Firebase";
+        options.DefaultChallengeScheme = "Firebase";
     })
     .AddScheme<AuthenticationSchemeOptions, FirebaseAuthenticationHandler>("Firebase", _ => { });
-
 
 var app = builder.Build();
 
@@ -73,20 +69,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//Allow swagger to be used without authentication
-app.UseWhen(context => !context.Request.Path.StartsWithSegments("/swagger"), appBuilder =>
-{
-    appBuilder.UseMiddleware<FirebaseAuthMiddleware>();
-});
-
-
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Insert FirebaseAuthMiddleware before MapControllers
+app.UseWhen(context => !context.Request.Path.StartsWithSegments("/swagger"), appBuilder =>
+{
+    appBuilder.UseMiddleware<FirebaseAuthMiddleware>();
+});
+
 app.MapControllers();
 
 app.Run();
-
