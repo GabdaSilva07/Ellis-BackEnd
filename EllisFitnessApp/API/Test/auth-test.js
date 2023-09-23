@@ -24,7 +24,7 @@ async function signInAndGetToken() {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     const user = userCredential.user;
     const idToken = await user.getIdToken();
