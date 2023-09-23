@@ -59,11 +59,11 @@ namespace Authentification
                     else
                     {
                         // If the user is not authorized, log the message and set the response without calling the next middleware
-                        
+
                         // If the user is not authorized, log the message and also build a authentication link and log it
                         var email = decodedToken.Claims["email"].ToString();
                         var authLink = await FirebaseAuth.DefaultInstance.GenerateEmailVerificationLinkAsync(email).ConfigureAwait(false);
-                        
+
                         await LogAndSetResponse($"User {decodedToken.Uid} is not authorized.", LogLevel.Debug, StatusCodes.Status403Forbidden);
                     }
                 }

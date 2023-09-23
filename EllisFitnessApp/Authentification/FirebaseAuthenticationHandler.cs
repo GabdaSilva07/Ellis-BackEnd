@@ -54,7 +54,7 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
-            
+
             return AuthenticateResult.Success(ticket);
         }
         catch (FirebaseAuthException)
