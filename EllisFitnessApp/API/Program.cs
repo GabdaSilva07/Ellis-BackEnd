@@ -46,6 +46,7 @@ builder.Services.AddSingleton<MongoConfig>();
 builder.Services.AddSingleton<ILogger>(logger);
 builder.Services.AddSingleton<IFireBaseAuthentification, FireBaseAuthentification>();
 builder.Services.AddSingleton<IFirebaseMessagingService<IMessageModel>, FirebaseMessagingService<IMessageModel>>();
+builder.Services.AddSingleton<FirebaseService.FirebaseService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

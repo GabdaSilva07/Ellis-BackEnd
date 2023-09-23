@@ -43,6 +43,11 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
             // Check if the email is verified
             if (!(bool)decodedToken.Claims["email_verified"])
             {
+                var email = decodedToken.Claims["email"].ToString();
+                var authLink = await FirebaseAuth.DefaultInstance.GenerateEmailVerificationLinkAsync(email).ConfigureAwait(false);
+
+                Console.WriteLine($"Email {email} is not verified. Please verify your email by clicking on the following link: {authLink}");
+
                 return AuthenticateResult.Fail("Email not verified.");
             }
 

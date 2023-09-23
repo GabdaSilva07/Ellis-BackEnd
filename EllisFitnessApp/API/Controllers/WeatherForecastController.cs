@@ -1,3 +1,5 @@
+using Domain.Interface.FirebaseMessagingService;
+using Domain.Messages;
 using Domain.Models.Logger.LogMessage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +18,29 @@ public class WeatherForecastController : ControllerBase
     };
 
     private readonly ILogger<WeatherForecastController> _logger;
+    private readonly IFirebaseMessagingService<IMessageModel> _firebaseMessagingService;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IFirebaseMessagingService<IMessageModel> firebaseMessagingService)
     {
         _logger = logger;
+        _firebaseMessagingService = firebaseMessagingService;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
+
+        var testMessage = new TestMessage
+        {
+            Title = "Weather Update",
+            Body = "It's sunny!",
+            Token = "Your_FCM_Token",
+            Topic = "weather_updates"
+        };
+
+        _firebaseMessagingService.SendMessageAsync(testMessage);
+
+
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateTime.UtcNow.AddDays(index),
