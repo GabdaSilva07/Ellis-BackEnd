@@ -28,10 +28,10 @@ if (environment.IsDevelopment())
     config.AddJsonFile("appsettings.Development.json");
 }
 
-// FirebaseApp.Create(new AppOptions()
-// {
-//     Credential = GoogleCredential.FromFile("FireBase.json")
-// });
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("../FirebaseService/firebase.json")
+});
 
 // Get MongoDB configuration and attach to MongoConfig
 var mongoConfig = config.GetSection("MongoDB").Get<MongoConfig>();
