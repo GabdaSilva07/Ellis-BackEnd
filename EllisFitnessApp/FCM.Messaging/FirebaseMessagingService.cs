@@ -26,7 +26,7 @@ namespace FCM.Messaging
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
             var jsonMessage = JsonConvert.SerializeObject(firebaseMessage);
-            var response = await _httpClient.PostAsync("https://fcm.googleapis.com/v1/projects/your-project-id/messages:send", new StringContent(jsonMessage, Encoding.UTF8, "application/json"));
+            var response = await _httpClient.PostAsync("https://fcm.googleapis.com/v1/projects/ellisfitnessappdev/messages:send", new StringContent(jsonMessage, Encoding.UTF8, "application/json"));
             return response.IsSuccessStatusCode;
         }
 

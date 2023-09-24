@@ -28,10 +28,10 @@ if (environment.IsDevelopment())
     config.AddJsonFile("appsettings.Development.json");
 }
 
-FirebaseApp.Create(new AppOptions()
-{
-    Credential = GoogleCredential.FromFile("FireBase.json")
-});
+// FirebaseApp.Create(new AppOptions()
+// {
+//     Credential = GoogleCredential.FromFile("FireBase.json")
+// });
 
 // Get MongoDB configuration and attach to MongoConfig
 var mongoConfig = config.GetSection("MongoDB").Get<MongoConfig>();
@@ -44,9 +44,10 @@ ILogger logger = new Logger(LogSource.Api,
 builder.Services.Configure<MongoConfig>(config.GetSection("MongoDB"));
 builder.Services.AddSingleton<MongoConfig>();
 builder.Services.AddSingleton<ILogger>(logger);
-builder.Services.AddSingleton<IFireBaseAuthentification, FireBaseAuthentification>();
-builder.Services.AddSingleton<IFirebaseMessagingService<IMessageModel>, FirebaseMessagingService<IMessageModel>>();
 builder.Services.AddSingleton<FirebaseService.FirebaseService>();
+builder.Services.AddSingleton<IFirebaseMessagingService<IMessageModel>, FirebaseMessagingService<IMessageModel>>();
+builder.Services.AddSingleton<IFireBaseAuthentification, FireBaseAuthentification>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -27,7 +27,7 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public async Task<IEnumerable<WeatherForecast>> Get()
     {
         
         var testMessage = new TestMessage
@@ -38,7 +38,16 @@ public class WeatherForecastController : ControllerBase
             Topic = "weather_updates"
         };
         
-        _firebaseMessagingService.SendMessageAsync(testMessage);
+        var result = await _firebaseMessagingService.SendMessageAsync(testMessage);
+
+        if (result)
+        {
+            _logger.LogInformation("Message sent successfully.");
+        }
+        else
+        {
+            _logger.LogError("Failed to send the message.");
+        }
         
         
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
