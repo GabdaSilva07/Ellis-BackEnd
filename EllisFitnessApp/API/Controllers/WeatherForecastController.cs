@@ -37,7 +37,7 @@ public class WeatherForecastController : ControllerBase
             Token = "Your_FCM_Token",
             Topic = "weather_updates"
         };
-        
+
         var result = await _firebaseMessagingService.SendMessageAsync(testMessage);
 
         if (result)
@@ -48,8 +48,8 @@ public class WeatherForecastController : ControllerBase
         {
             _logger.LogError("Failed to send the message.");
         }
-        
-        
+
+
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateTime.UtcNow.AddDays(index),
