@@ -29,7 +29,7 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public async Task<IEnumerable<WeatherForecast>> Get()
     {
-        
+
         var testMessage = new TestMessage
         {
             Title = "Weather Update",

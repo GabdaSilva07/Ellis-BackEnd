@@ -45,7 +45,7 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
             {
                 var email = decodedToken.Claims["email"].ToString();
                 var authLink = await FirebaseAuth.DefaultInstance.GenerateEmailVerificationLinkAsync(email).ConfigureAwait(false);
-                
+
                 Console.WriteLine($"Email {email} is not verified. Please verify your email by clicking on the following link: {authLink}");
 
                 return AuthenticateResult.Fail("Email not verified.");
@@ -59,7 +59,7 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
-            
+
             return AuthenticateResult.Success(ticket);
         }
         catch (FirebaseAuthException)
