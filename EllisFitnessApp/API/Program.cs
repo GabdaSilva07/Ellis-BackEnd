@@ -1,6 +1,7 @@
 using Authentification;
 using DnsClient.Internal;
 using Domain.Interface.Authentification;
+using Domain.Interface.Firebase;
 using Domain.Interface.FirebaseMessagingService;
 using Domain.Logger.Interface.CQRS;
 using Domain.Models.Config;
@@ -44,7 +45,8 @@ ILogger logger = new Logger(LogSource.Api,
 builder.Services.Configure<MongoConfig>(config.GetSection("MongoDB"));
 builder.Services.AddSingleton<MongoConfig>();
 builder.Services.AddSingleton<ILogger>(logger);
-builder.Services.AddSingleton<FirebaseService.FirebaseService>();
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IFirebaseService, FirebaseService.FirebaseService>();
 builder.Services.AddSingleton<IFirebaseMessagingService<IMessageModel>, FirebaseMessagingService<IMessageModel>>();
 builder.Services.AddSingleton<IFireBaseAuthentification, FireBaseAuthentification>();
 
