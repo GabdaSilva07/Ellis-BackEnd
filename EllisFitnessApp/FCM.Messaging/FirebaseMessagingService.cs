@@ -32,7 +32,7 @@ namespace FCM.Messaging
             Console.WriteLine($"Response Status: {response.StatusCode}, Content: {responseContent}");
             Console.WriteLine($"Authorization Header: {_httpClient.DefaultRequestHeaders.Authorization}");
             Console.WriteLine($"JSON Message: {jsonMessage}");
-            
+
             return response.IsSuccessStatusCode;
         }
         private FcmMessage ConvertToFirebaseMessage(T messageModel)
