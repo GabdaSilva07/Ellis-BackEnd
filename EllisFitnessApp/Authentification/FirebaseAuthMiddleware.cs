@@ -31,20 +31,26 @@ namespace Authentification
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (!context.Request.Headers.TryGetValue(AuthorizationHeader, out var authHeader))
-            {
-                await LogAndSetResponse("Authorization header not found.", LogLevel.Debug, StatusCodes.Status401Unauthorized);
-                return;
-            }
-
+                    if (decodedToken.Claims.TryGetValue("email_verified", out object? emailVerified) && emailVerified is bool isEmailVerified && isEmailVerified)
+                    {
+                        _logger.Log(new LogMessage { Message = $"User {decodedToken.Uid} is authorized.", LogLevel = LogLevel.Debug }, false);
+                        await _next(context).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        // If the user is not authorized, log the message and set the response without calling the next middleware
+                        // If the user is not authorized, log the message and also build a authentication link and log it
+                        var email = decodedToken.Claims["email"].ToString();
+                        var authLink = await FirebaseAuth.DefaultInstance.GenerateEmailVerificationLinkAsync(email).ConfigureAwait(false);
+                        _logger.Log(new LogMessage { Message = $"Authentication link: {authLink}", LogLevel = LogLevel.Debug }, false);
+                        await LogAndSetResponse($"User {decodedToken.Uid} is not authorized.", LogLevel.Debug, StatusCodes.Status403Forbidden);
+                    }
             if (!authHeader.ToString().StartsWith(BearerPrefix))
             {
                 await LogAndSetResponse("Invalid authorization type. Only Bearer is supported.", LogLevel.Debug, StatusCodes.Status401Unauthorized);
                 return;
             }
-
             var idToken = authHeader.ToString().Substring(BearerPrefix.Length).Trim();
-
             try
             {
                 FirebaseToken decodedToken = await _fireBaseAuthentification.VerifyIdTokenAsync(idToken).ConfigureAwait(false);
