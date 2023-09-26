@@ -1,28 +1,45 @@
+# Name of the GitHub Actions workflow
 name: Build and Push Docker Image to GitLab
 
+# Trigger this workflow on push to the master branch
 on:
   push:
     branches:
-      - master  # Trigger the workflow on push to main branch
+      - master
 
+# Define the jobs to run
 jobs:
   build:
+    # Run the job on an Ubuntu-latest runner
     runs-on: ubuntu-latest
 
+    # Define the steps to execute
     steps:
+    # Step 1: Checkout the code from the repository
     - name: Checkout code
       uses: actions/checkout@v2
 
+    # Step 2: Set up Docker Buildx for building Docker images
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
+    # Step 3: Log in to GitLab's Container Registry
+    # GITLAB_TOKEN and GITLAB_USERNAME are secrets you need to set in your GitHub repository
     - name: Login to GitLab Container Registry
       run: echo "${{ secrets.GITLAB_TOKEN }}" | docker login -u ${{ secrets.GITLAB_USERNAME }} --password-stdin registry.gitlab.com
 
+    # Step 4: Generate a timestamp for tagging the Docker image
+    # The date command is used to generate a timestamp in the format DD-MM-YYYY-HH-MM
+    - name: Generate timestamp
+      id: timestamp
+      run: echo "::set-output name=timestamp::$(date +'%d-%m-%Y-%H-%M')"
+
+    # Step 5: Build and push the Docker image to GitLab's Container Registry
+    # The image is tagged with 'api-' followed by the generated timestamp
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
-        context: ./EllisFitnessApp  # Updated context
-        file: ./EllisFitnessApp/Dockerfile  # Specify the Dockerfile path
-        push: true
-        tags: registry.gitlab.com/gabdasilva07/ellis-backend:latest  # Changed to lowercase
+        context: ./EllisFitnessApp  # The context is your application folder
+        file: ./EllisFitnessApp/Dockerfile  # Path to your Dockerfile
+        push: true  # Push the image to the registry
+        tags: registry.gitlab.com/gabdasilva07/ellis-backend:api-${{ steps.timestamp.outputs.timestamp }}  # Image tag
