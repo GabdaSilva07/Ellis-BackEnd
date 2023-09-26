@@ -3,6 +3,7 @@ using Domain.Messages;
 using FirebaseAdmin.Messaging;
 using System.Net.Http;
 using System.Text;
+using Domain.Interface.Firebase;
 using Newtonsoft.Json;
 
 namespace FCM.Messaging
@@ -10,11 +11,11 @@ namespace FCM.Messaging
     public class FirebaseMessagingService<T> : IFirebaseMessagingService<T> where T : IMessageModel
     {
         private readonly HttpClient _httpClient;
-        private readonly FirebaseService.FirebaseService _firebaseService;
+        private readonly IFirebaseService _firebaseService;
 
-        public FirebaseMessagingService(FirebaseService.FirebaseService firebaseService)
+        public FirebaseMessagingService(HttpClient httpClient, IFirebaseService firebaseService)
         {
-            _httpClient = new HttpClient();
+            _httpClient = httpClient;
             _firebaseService = firebaseService;
         }
 
@@ -26,21 +27,29 @@ namespace FCM.Messaging
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
             var jsonMessage = JsonConvert.SerializeObject(firebaseMessage);
-            var response = await _httpClient.PostAsync("https://fcm.googleapis.com/v1/projects/your-project-id/messages:send", new StringContent(jsonMessage, Encoding.UTF8, "application/json"));
+            var response = await _httpClient.PostAsync("https://fcm.googleapis.com/v1/projects/ellisfitnessappdev/messages:send", new StringContent(jsonMessage, Encoding.UTF8, "application/json"));
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response Status: {response.StatusCode}, Content: {responseContent}");
+            Console.WriteLine($"Authorization Header: {_httpClient.DefaultRequestHeaders.Authorization}");
+            Console.WriteLine($"JSON Message: {jsonMessage}");
+            
             return response.IsSuccessStatusCode;
         }
-
-        private Message ConvertToFirebaseMessage(T messageModel)
+        private FcmMessage ConvertToFirebaseMessage(T messageModel)
         {
-            var firebaseMessage = new Message()
+            var firebaseMessage = new FcmMessage()
             {
-                Notification = new Notification()
+                Message = new FcmMessage.MessageBody()
                 {
-                    Title = messageModel.Title,
-                    Body = messageModel.Body
-                },
-                Token = messageModel.Token,
-                Topic = messageModel.Topic
+                    Notification = new FcmMessage.Notification()
+                    {
+                        Title = messageModel.Title,
+                        Body = messageModel.Body,
+                        Image = messageModel.ImageUrl
+                    },
+                    Data = messageModel.Data,
+                    Topic = messageModel.Topic
+                }
             };
 
             return firebaseMessage;

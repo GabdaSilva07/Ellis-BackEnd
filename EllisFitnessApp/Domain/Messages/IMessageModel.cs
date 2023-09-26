@@ -6,4 +6,6 @@ public interface IMessageModel
     string? Body { get; set; }
     string? Token { get; set; }
     string? Topic { get; set; }
+    string? ImageUrl { get; set; }
+    Dictionary<string, string>? Data { get; set; }
 }
