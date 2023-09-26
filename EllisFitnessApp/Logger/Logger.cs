@@ -29,10 +29,9 @@ public class Logger : ILogger
         _LogSource = logSource;
         _LogMessageFactory = commandFactory;
         _LogLevel = logLevel;
-
         var minimumSerilogLogLevel = LogEventLevel.Debug;
-
         switch (logLevel)
+
         {
             case LogLevel.Debug:
                 minimumSerilogLogLevel = LogEventLevel.Debug;
@@ -64,7 +63,6 @@ public class Logger : ILogger
         message.TimeStamp = DateTime.UtcNow;
         message.LogSource = _LogSource;
         var prefix = !string.IsNullOrEmpty(message.Subject) ? $"{message.Subject} - " : "";
-
         switch (message.LogLevel)
         {
             case LogLevel.Debug:
@@ -95,7 +93,6 @@ public class Logger : ILogger
 
     public void Log(LogMessage message, bool logToDatabase)
     {
-
         LogAsync(message, logToDatabase).GetAwaiter().GetResult();
     }
 
