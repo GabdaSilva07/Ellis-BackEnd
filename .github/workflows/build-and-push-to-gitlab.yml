@@ -22,6 +22,7 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
-        context: .
+        context: ./EllisFitnessApp  # Updated context
+        file: ./EllisFitnessApp/Dockerfile  # Specify the Dockerfile path
         push: true
-        tags: registry.gitlab.com/gabdasilva07/ellis-backend:latest 
+        tags: registry.gitlab.com/gabdasilva07/ellis-backend:latest  # Changed to lowercase
