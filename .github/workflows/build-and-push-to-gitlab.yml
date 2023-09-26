@@ -24,4 +24,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: registry.gitlab.com/GabdaSilva07/Ellis-BackEnd:latest
+        tags: registry.gitlab.com/gabdasilva07/ellis-backend:latest 
